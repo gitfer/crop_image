@@ -4,8 +4,20 @@ mymodal.controller('MainCtrl', function ($scope) {
     $scope.showModal = false;
     $scope.toggleModal = function(){
         $scope.showModal = !$scope.showModal;
+        if($scope.showModal === true){
+                  angular.element(document.querySelector('#fileInput')).on('change',handleFileSelect);
+        }
     };
-         $scope.myImage='';
+    $scope.onClose = function (myCroppedImage) {
+      $scope.myCroppedImage = myCroppedImage;
+    };
+
+        $scope.onChange=function($dataURI) {
+          console.log('onChange fired');
+          //$scope.myCroppedImage = $dataURI;
+        };
+
+        $scope.myImage='';
         $scope.myCroppedImage='';
 
         var handleFileSelect=function(evt) {
@@ -18,7 +30,7 @@ mymodal.controller('MainCtrl', function ($scope) {
           };
           reader.readAsDataURL(file);
         };
-        angular.element(document.querySelector('#fileInput')).on('change',handleFileSelect);
+
 
   });
 
@@ -58,6 +70,10 @@ mymodal.directive('modal', function () {
         $(element).on('hidden.bs.modal', function(){
           scope.$apply(function(){
             scope.$parent[attrs.visible] = false;
+            if(scope.$parent && scope.$parent.onClose !== undefined){
+              scope.$parent.onClose(scope.myCroppedImage);  
+            }
+            
           });
         });
       }
